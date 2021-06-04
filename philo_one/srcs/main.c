@@ -6,7 +6,7 @@
 /*   By: tevan-de <tevan-de@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/05/24 11:26:38 by tevan-de      #+#    #+#                 */
-/*   Updated: 2021/06/01 11:44:27 by tevan-de      ########   odam.nl         */
+/*   Updated: 2021/06/02 09:48:00 by tevan-de      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ static void	initialize_input(t_input *input, int argc, char **argv)
 	input->timer.sleep = ft_atoi(argv[4]);
 	if (argc == 6)
 		input->n_eat = ft_atoi(argv[5]);
-	input->timer.start = 0;
+	input->timer.last_eaten = 0;
 }
 
 int	main(int argc, char **argv)

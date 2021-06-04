@@ -6,86 +6,64 @@
 /*   By: tevan-de <tevan-de@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/05/25 17:39:04 by tevan-de      #+#    #+#                 */
-/*   Updated: 2021/05/31 11:37:55 by tevan-de      ########   odam.nl         */
+/*   Updated: 2021/06/03 12:09:36 by tevan-de      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philo_one.h"
 
-static void	fork_assign(t_dlist *philosophers)
+static void	fork_assign(t_philo *philosophers, int n_philo)
 {
-	// int		i;
-	t_dlist	*cur;
-	t_dlist	*next;
+	int	i;
 
-	cur = philosophers;
-	// i = 0;
-	while (cur)
+	i = 0;
+	while (i < n_philo - 1)
 	{
-		next = cur->next;
-		if (next)
-		{
-			// printf("if i = %d\n", i);
-			((t_philo*)cur->content)->fork_next = &((t_philo*)next->content)->fork;
-		}
-		else
-		{
-			// printf("else i = %d\n", i);
-			((t_philo*)cur->content)->fork_next = &((t_philo*)philosophers->content)->fork;
-		}
-		cur = next;
-		// i++;
+		philosophers[i].fork_next = &philosophers[i + 1].fork;
+		i++;
 	}
+	philosophers[i].fork_next = &philosophers[0].fork;
 }
 
-int	fork_destroy(t_dlist *philosophers)
+int	fork_destroy(t_philo *philosophers, int n_philo)
 {
-	t_dlist	*temp;
-	t_philo	*phil;
-	
-	temp = philosophers;
-	while (temp->next)
+	int i;
+
+	i = 0;	
+	while (i < n_philo)
 	{
-		phil = ((t_philo*)temp->content);
-		if (pthread_mutex_destroy(&phil->fork))
+		if (pthread_mutex_destroy(&philosophers[i].fork))
 			return (-1);
-		temp = temp->next;
+		i++;
 	}
 	return (0);
 }
 
-static int	fork_destroy_part(t_dlist *philosophers)
+static int	fork_destroy_part(t_philo *philosophers, int i)
 {
-	t_dlist	*temp;
-	t_philo	*phil;
-	
-	temp = philosophers;
-	while (temp->prev)
+	while (i > 0)
 	{
-		phil = ((t_philo*)temp->content);
-		if (pthread_mutex_destroy(&phil->fork))
+		i--;
+		if (pthread_mutex_destroy(&philosophers[i].fork))
 			return (-1);
-		temp = temp->prev;
 	}
 	return (0);
 }
 
-int	fork_init(t_dlist *philosophers)
+int	fork_init(t_philo *philosophers, int n_philo)
 {
-	t_dlist	*temp;
-	t_philo	*phil;
+	int	i;
 
-	temp = philosophers;
-	while (temp)
+	i = 0;
+	while (i < n_philo)
 	{
-		phil = ((t_philo*)temp->content);
-		if (pthread_mutex_init(&phil->fork, NULL))
+		if (pthread_mutex_init(&philosophers[i].fork, NULL))
 		{
-			fork_destroy_part(temp);
+			fork_destroy_part(&philosophers[i], i);
 			return (-1);
 		}
-		temp = temp->next;
+		i++;
 	}
-	fork_assign(philosophers);
+	fork_assign(philosophers, n_philo);
 	return (0);
 }

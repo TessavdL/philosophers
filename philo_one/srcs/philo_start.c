@@ -6,99 +6,111 @@
 /*   By: tevan-de <tevan-de@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/05/25 11:09:09 by tevan-de      #+#    #+#                 */
-/*   Updated: 2021/06/01 13:24:06 by tevan-de      ########   odam.nl         */
+/*   Updated: 2021/06/03 22:53:46 by tevan-de      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philo_one.h"
 
-static int	philo_join(t_dlist *philosophers)
+static void *check_for_dead(void *dead)
 {
-	t_dlist	*temp;
-	t_philo	*phil;
+	bool	*dead_check;
 
-	temp = philosophers;
-	while (temp->next)
+	dead_check = (bool*)dead;
+	while (1)
 	{
-		phil = ((t_philo*)temp->content);
-		if (pthread_join(phil->philosopher, NULL))
-			return (-1);
-		temp = temp->next;
-	}
-	return (0);
-}
-
-static void *philo_create(void *philosopher)
-{
-	t_philo	*phil;
-
-	phil = ((t_philo*)philosopher);
-	while (phil->n_eat < phil->total_eat)
-	{
-		eat_sleep_think(phil);
+		if (*dead_check == true)
+		{
+			printf("Phil detected dead\n");
+			break ;
+		}
+		usleep(1000);
 	}
 	return (NULL);
 }
 
-static int	philo_init(t_dlist **philosophers, t_input input)
+static int	philo_join(t_philo *philosophers, int n_philo)
 {
-	int				i;
-	unsigned long	time;
-	t_philo			*phil;
+	int	i;
 
-	time = get_time();
+	i = 0;
+	while (i < n_philo)
+	{
+		if (pthread_join(philosophers[i].philosopher, NULL))
+			return (-1);
+		i++;
+	}
+	return (0);
+}
+
+static t_philo	*philo_init(t_input input)
+{
+	int		i;
+	t_philo *philosophers;
+
+	philosophers = malloc(sizeof(t_philo) * input.n_philo);
+	if (!philosophers)
+		return (NULL);
 	i = 0;
 	while (i < input.n_philo)
 	{
-		phil = malloc(sizeof(t_philo));
-		if (!phil)
-			return (free_philosophers_and_return(*philosophers));
-		memset(phil, 0, sizeof(*phil));
-		phil->i = i + 1;
-		phil->total_eat = input.n_eat;
-		phil->total_philo = input.n_philo;
-		phil->timer = &input.timer;
-		phil->timer->start = time;
-		dlist_add_back(philosophers, dlist_new(phil));
+		memset(&philosophers[i], 0, sizeof(philosophers[i]));
+		philosophers[i].i = i + 1;
+		philosophers[i].total_eat = input.n_eat;
+		philosophers[i].timer.death = input.timer.death;
+		philosophers[i].timer.eat = input.timer.eat;
+		philosophers[i].timer.sleep = input.timer.sleep;
 		i++;
 	}
-	if (fork_init(*philosophers))
-		return (free_philosophers_and_return(*philosophers));
-	return (0);
+	if (fork_init(philosophers, input.n_philo))
+	{
+		free(philosophers);
+		return (NULL);
+	}
+	return (philosophers);
 }
 
 int	philo_start(t_input input)
 {
-	t_dlist	*temp;
-	t_dlist	*philosophers;
-	t_philo *phil;
+	pthread_t dead_thread;
+	bool	dead;
+	int		i;
+	t_philo	*philosophers;
 
-	philosophers = NULL;
-	if (philo_init(&philosophers, input))
+	dead = false;
+	philosophers = philo_init(input);
+	if (!philosophers)
 		return (-1);
-	temp = philosophers;
-	while (temp)
+	pthread_create(&dead_thread, NULL, &check_for_dead, &dead);
+	i = 0;
+	while (i < input.n_philo)
 	{
-		phil = ((t_philo*)temp->content);
-		if (pthread_create(&phil->philosopher, NULL, &philo_create, phil))
+		philosophers[i].dead = &dead;
+		philosophers[i].timer.last_eaten = get_time();
+		if (pthread_create(&philosophers[i].philosopher, NULL, &eat_sleep_think_repeat, &philosophers[i]))
 		{
 			printf("Create\n");
-			return (free_philosophers_and_return(philosophers));
+			free(philosophers);
+			return (-1);
 		}
-		temp = temp->next;
+		i++;
 	}
-	if (philo_join(philosophers))
+	pthread_detach(dead_thread);
+	if (philo_join(philosophers, input.n_philo))
 	{
 		printf("Join\n");
-		return (free_philosophers_and_return(philosophers));
+		fork_destroy(philosophers, input.n_philo);
+		free(philosophers);
+		return (-1);
 	}
-	for (temp = philosophers; temp; temp = temp->next)
-		printf("n eat = %d\n", ((t_philo*)temp->content)->n_eat);
-	if (fork_destroy(dlist_last(philosophers)))
+	for (i = 0; i < input.n_philo; i++)
+		printf("Phil %d has eaten %d times\n", i, philosophers[i].n_eat);
+	if (fork_destroy(philosophers, input.n_philo))
 	{
 		printf("Destroy\n");
-		return (free_philosophers_and_return(philosophers));
+		free(philosophers);
+		return (-1);
 	}
-	dlist_delete_all(&philosophers, free);
+	free(philosophers);
 	return (0);
 }

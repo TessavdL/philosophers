@@ -6,17 +6,11 @@
 /*   By: tevan-de <tevan-de@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/05/24 12:17:29 by tevan-de      #+#    #+#                 */
-/*   Updated: 2021/06/01 11:39:04 by tevan-de      ########   odam.nl         */
+/*   Updated: 2021/06/03 22:47:40 by tevan-de      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philo_one.h"
-
-int	free_philosophers_and_return(t_dlist *philosophers)
-{
-	dlist_delete_all(&philosophers, free);
-	return (-1);
-}
 
 static long int	ft_fkatoi(const char *str, unsigned long int res, int sign)
 {
@@ -71,4 +65,41 @@ unsigned long	get_time(void)
 	seconds = tv.tv_sec * 1000;
 	microseconds = tv.tv_usec / 1000;
 	return (seconds + microseconds);
+}
+
+bool	check_dead_timer(t_philo *phil)
+{
+	long long	time;
+	long long	time_between_meals;
+
+
+	time = (long long)get_time();
+	time_between_meals = time - (long long)phil->timer.last_eaten;
+	if ((long long)phil->timer.death < time_between_meals)
+		return (true);
+	return (false);
+}
+
+bool	check_if_will_be_dead(t_philo *phil, int eat, int sleep)
+{
+	long long	time;
+	long long	time_between_meals;
+
+	time = (long long)get_time();
+	time_between_meals = time - (long long)phil->timer.last_eaten;
+	if (eat)
+	{
+		if (time_between_meals + phil->timer.eat > phil->timer.death)
+			return (true);
+		else
+			return (false);
+	}
+	if (sleep)
+	{
+		if (time_between_meals + phil->timer.sleep > phil->timer.death)
+			return (true);
+		else
+			return (false);
+	}
+	return (false);
 }
