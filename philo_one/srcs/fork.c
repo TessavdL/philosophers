@@ -6,64 +6,63 @@
 /*   By: tevan-de <tevan-de@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/05/25 17:39:04 by tevan-de      #+#    #+#                 */
-/*   Updated: 2021/06/03 12:09:36 by tevan-de      ########   odam.nl         */
+/*   Updated: 2021/06/21 12:45:46 by tevan-de      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philo_one.h"
 
-static void	fork_assign(t_philo *philosophers, int n_philo)
+static void	set_pointer_to_right_fork(t_philosopher *philosophers,
+	int number_of_philosophers)
 {
 	int	i;
 
 	i = 0;
-	while (i < n_philo - 1)
+	while (i < number_of_philosophers - 1)
 	{
-		philosophers[i].fork_next = &philosophers[i + 1].fork;
+		philosophers[i].fork_right = &philosophers[i + 1].fork_left;
 		i++;
 	}
-	philosophers[i].fork_next = &philosophers[0].fork;
+	philosophers[i].fork_right = &philosophers[0].fork_left;
 }
 
-int	fork_destroy(t_philo *philosophers, int n_philo)
+int	destroy_forks(t_philosopher *philosophers, int number_of_philosophers)
 {
-	int i;
+	int	i;
 
-	i = 0;	
-	while (i < n_philo)
+	i = 0;
+	while (i < number_of_philosophers)
 	{
-		if (pthread_mutex_destroy(&philosophers[i].fork))
-			return (-1);
+		pthread_mutex_destroy(&philosophers[i].fork_left);
 		i++;
 	}
 	return (0);
 }
 
-static int	fork_destroy_part(t_philo *philosophers, int i)
+static int	destroy_forks_part(t_philosopher *philosophers, int i)
 {
 	while (i > 0)
 	{
 		i--;
-		if (pthread_mutex_destroy(&philosophers[i].fork))
-			return (-1);
+		pthread_mutex_destroy(&philosophers[i].fork_left);
 	}
 	return (0);
 }
 
-int	fork_init(t_philo *philosophers, int n_philo)
+int	initiliaze_forks(t_philosopher *philosophers, int number_of_philosophers)
 {
 	int	i;
 
 	i = 0;
-	while (i < n_philo)
+	while (i < number_of_philosophers)
 	{
-		if (pthread_mutex_init(&philosophers[i].fork, NULL))
+		if (pthread_mutex_init(&philosophers[i].fork_left, NULL))
 		{
-			fork_destroy_part(&philosophers[i], i);
+			destroy_forks_part(&philosophers[i], i);
 			return (-1);
 		}
 		i++;
 	}
-	fork_assign(philosophers, n_philo);
+	set_pointer_to_right_fork(philosophers, number_of_philosophers);
 	return (0);
 }

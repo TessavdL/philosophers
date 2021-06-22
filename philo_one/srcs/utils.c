@@ -6,46 +6,35 @@
 /*   By: tevan-de <tevan-de@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/05/24 12:17:29 by tevan-de      #+#    #+#                 */
-/*   Updated: 2021/06/03 22:47:40 by tevan-de      ########   odam.nl         */
+/*   Updated: 2021/06/22 12:30:55 by tevan-de      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philo_one.h"
 
-static long int	ft_fkatoi(const char *str, unsigned long int res, int sign)
+static t_bool	check_if_this_philosopher_is_dead(t_philosopher *phil)
 {
-	while (*str && *str >= '0' && *str <= '9')
-	{
-		if ((res > 922337203685477580 || (res == 922337203685477580
-			&& (*str - '0') > 7)) && sign == 1)
-			return (-1);
-		else if ((res > 922337203685477580 || (res == 922337203685477580
-			&& (*str - '0') > 8)) && sign == -1)
-			return (0);
-		res = res * 10 + (*str - '0');
-		str++;
-	}
-	return (res);
+	long long	time;
+	long long	time_between_meals;
+
+	time = (long long)get_time();
+	time_between_meals = time - (long long)phil->time_of_last_meal;
+	if ((long long)phil->max_time_between_meals < time_between_meals)
+		return (TRUE);
+	return (FALSE);
 }
 
-int	ft_atoi(const char *str)
+t_bool	check_if_a_philosopher_is_dead(t_philosopher *phil)
 {
-	unsigned long int	res;
-	int					sign;
-
-	res = 0;
-	sign = 1;
-	while (*str == 32 || (*str >= 9 && *str <= 13))
-		str++;
-	if (*str == '-')
+	if (*phil->dead == TRUE)
+		return (TRUE);
+	if (check_if_this_philosopher_is_dead(phil))
 	{
-		sign = -1;
-		str++;
+		print_message("is dead 💀", phil);
+		*phil->dead = TRUE;
+		return (TRUE);
 	}
-	else if (*str == '+')
-		str++;
-	res = ft_fkatoi(str, res, sign);
-	return (res * sign);
+	return (FALSE);
 }
 
 int	ft_isdigit(int c)
@@ -67,39 +56,12 @@ unsigned long	get_time(void)
 	return (seconds + microseconds);
 }
 
-bool	check_dead_timer(t_philo *phil)
+void	print_message(char *message, t_philosopher *phil)
 {
-	long long	time;
-	long long	time_between_meals;
+	unsigned long	time_elapsed;
 
-
-	time = (long long)get_time();
-	time_between_meals = time - (long long)phil->timer.last_eaten;
-	if ((long long)phil->timer.death < time_between_meals)
-		return (true);
-	return (false);
-}
-
-bool	check_if_will_be_dead(t_philo *phil, int eat, int sleep)
-{
-	long long	time;
-	long long	time_between_meals;
-
-	time = (long long)get_time();
-	time_between_meals = time - (long long)phil->timer.last_eaten;
-	if (eat)
-	{
-		if (time_between_meals + phil->timer.eat > phil->timer.death)
-			return (true);
-		else
-			return (false);
-	}
-	if (sleep)
-	{
-		if (time_between_meals + phil->timer.sleep > phil->timer.death)
-			return (true);
-		else
-			return (false);
-	}
-	return (false);
+	pthread_mutex_lock(phil->print_mutex);
+	time_elapsed = get_time() - phil->time_start;
+	printf("[%.4lu] %s %s\n", time_elapsed, phil->name, message);
+	pthread_mutex_unlock(phil->print_mutex);
 }

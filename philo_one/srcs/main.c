@@ -6,31 +6,34 @@
 /*   By: tevan-de <tevan-de@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/05/24 11:26:38 by tevan-de      #+#    #+#                 */
-/*   Updated: 2021/06/02 09:48:00 by tevan-de      ########   odam.nl         */
+/*   Updated: 2021/06/22 12:35:45 by tevan-de      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philo_one.h"
 
-// static void	print_input(t_input input)
-// {
-// 	printf("number of philosophers = %d\n", input.n_philo);
-// 	printf("time to die = %d\n", input.t_die);
-// 	printf("time to eat = %d\n", input.t_eat);
-// 	printf("time to sleep = %d\n", input.t_sleep);
-// 	printf("number of times each philosopher must eat = %d\n", input.n_eat);
-// }
+static int	error_message(char *str)
+{
+	printf("%s\n", str);
+	return (1);
+}
+
+static int	no_simulation_just_death(t_input input)
+{
+	printf("[%.4lu] The philosopher is dead 💀\n", input.max_time_between_meals);
+	return (0);
+}
 
 static void	initialize_input(t_input *input, int argc, char **argv)
 {
-	memset(input, -2, sizeof(*input));
-	input->n_philo = ft_atoi(argv[1]);
-	input->timer.death = ft_atoi(argv[2]);
-	input->timer.eat = ft_atoi(argv[3]);
-	input->timer.sleep = ft_atoi(argv[4]);
+	memset(input, UNINITIALIZED, sizeof(*input));
+	input->number_of_philosophers = ft_atoi(argv[1]);
+	input->max_time_between_meals = ft_atoi(argv[2]);
+	input->time_it_takes_to_eat = ft_atoi(argv[3]);
+	input->time_it_takes_to_sleep = ft_atoi(argv[4]);
 	if (argc == 6)
-		input->n_eat = ft_atoi(argv[5]);
-	input->timer.last_eaten = 0;
+		input->number_of_meals = ft_atoi(argv[5]);
+	printf("%d\n", input->number_of_meals);
 }
 
 int	main(int argc, char **argv)
@@ -38,21 +41,13 @@ int	main(int argc, char **argv)
 	t_input	input;
 
 	if (check_arguments(argc, argv))
-	{
-		printf("Invalid input\n");
-		return (0);
-	}
+		return (error_message("Error\nInvalid argument"));
 	initialize_input(&input, argc, argv);
 	if (check_input(input, argc))
-	{
-		printf("Invalid input\n");
-		return (0);
-	}
-	// print_input(input);
-	if (philo_start(input) == -1)
-	{
-		printf("An error occured in philo_start\n");
-		return (-1);
-	}
+		return (error_message("Error\nInvalid input"));
+	if (input.number_of_philosophers == 1)
+		return (no_simulation_just_death(input));
+	if (setup_simulation(input))
+		return (error_message("An error occured during the simuation\n"));
 	return (0);
 }
