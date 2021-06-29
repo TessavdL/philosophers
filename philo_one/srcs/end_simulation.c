@@ -6,7 +6,7 @@
 /*   By: tevan-de <tevan-de@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/05/25 17:39:04 by tevan-de      #+#    #+#                 */
-/*   Updated: 2021/06/22 12:35:57 by tevan-de      ########   odam.nl         */
+/*   Updated: 2021/06/28 09:54:57 by tevan-de      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,15 +31,21 @@ int	end_simulation(t_philosopher *philosophers, int number_of_philosophers)
 {
 	if (wait_for_simulation_to_terminate(philosophers, number_of_philosophers))
 	{
-		pthread_mutex_destroy(philosophers[0].print_mutex);
+		destroy_mutex_helpers(philosophers[0].dead_mutex,
+			philosophers[0].eat_mutex, philosophers[0].print_mutex);
+		free_mutex_helpers(philosophers[0].dead_mutex,
+			philosophers[0].eat_mutex, philosophers[0].print_mutex, 1);
+		destroy_mutex_forks(philosophers, number_of_philosophers);
 		free(philosophers[0].dead);
 		free(philosophers);
-		destroy_forks(philosophers, number_of_philosophers);
 		return (ERROR_FAILED_TO_JOIN_THREADS);
 	}
-	pthread_mutex_destroy(philosophers[0].print_mutex);
+	destroy_mutex_helpers(philosophers[0].dead_mutex,
+		philosophers[0].eat_mutex, philosophers[0].print_mutex);
+	free_mutex_helpers(philosophers[0].dead_mutex,
+		philosophers[0].eat_mutex, philosophers[0].print_mutex, 0);
+	destroy_mutex_forks(philosophers, number_of_philosophers);
 	free(philosophers[0].dead);
 	free(philosophers);
-	destroy_forks(philosophers, number_of_philosophers);
 	return (0);
 }

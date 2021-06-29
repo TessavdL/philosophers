@@ -6,21 +6,11 @@
 /*   By: tevan-de <tevan-de@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/05/24 11:26:38 by tevan-de      #+#    #+#                 */
-/*   Updated: 2021/06/28 10:02:33 by tevan-de      ########   odam.nl         */
+/*   Updated: 2021/06/22 17:02:21 by tevan-de      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/philo_one.h"
-
-static void	print_input(t_input input)
-{
-	printf("n meals = %d\n", input.number_of_philosophers);
-	printf("death timer = %lu\n", input.max_time_between_meals);
-	printf("eat timer = %lu\n", input.time_it_takes_to_eat);
-	printf("sleep timer = %lu\n", input.time_it_takes_to_sleep);
-	if (input.number_of_meals != UNINITIALIZED)
-		printf("n meals = %d\n", input.number_of_meals);
-}
+#include "../includes/philo_bonus.h"
 
 static int	error_message(char *str)
 {
@@ -54,10 +44,8 @@ int	main(int argc, char **argv)
 	initialize_input(&input, argc, argv);
 	if (check_input(input, argc))
 		return (error_message("Error\nInvalid input"));
-	print_input(input);
 	if (input.number_of_philosophers == 1)
 		return (no_simulation_just_death(input));
-	if (setup_simulation(input))
-		return (error_message("An error occured during the simuation\n"));
+	setup_simulation(input);
 	return (0);
 }
