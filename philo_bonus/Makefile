@@ -6,7 +6,7 @@
 #    By: tevan-de <tevan-de@student.codam.nl>         +#+                      #
 #                                                    +#+                       #
 #    Created: 2021/05/24 11:37:21 by tevan-de      #+#    #+#                  #
-#    Updated: 2021/06/24 10:59:34 by tevan-de      ########   odam.nl          #
+#    Updated: 2021/07/05 13:02:09 by tevan-de      ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,10 +20,11 @@ SRCS_PATH	=	./srcs/
 
 SRCS		=	$(SRCS_PATH)check_arguments.c\
 				$(SRCS_PATH)check_input.c\
+				$(SRCS_PATH)check_philosopher_status.c\
 				$(SRCS_PATH)eat_sleep_think_repeat.c\
-				$(SRCS_PATH)fork.c\
 				$(SRCS_PATH)main.c\
-				$(SRCS_PATH)start_simulation.c\
+				$(SRCS_PATH)semaphores.c\
+				$(SRCS_PATH)simulation.c\
 				$(SRCS_PATH)utils_atoi.c\
 				$(SRCS_PATH)utils.c
 

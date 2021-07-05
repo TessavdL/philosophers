@@ -6,7 +6,7 @@
 /*   By: tevan-de <tevan-de@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/05/25 11:09:09 by tevan-de      #+#    #+#                 */
-/*   Updated: 2021/06/28 10:17:32 by tevan-de      ########   odam.nl         */
+/*   Updated: 2021/07/05 10:20:22 by tevan-de      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,11 @@ static int	create_threads(t_philosopher *philosophers,
 		if (pthread_create(&philosophers[i].philosopher, NULL,
 				&eat_sleep_think_repeat, &philosophers[i]))
 			return (ERROR_FAILED_TO_CREATE_THREAD);
-		// usleep(500);
+		i++;
+	}
+	i = 0;
+	while (i < number_of_philosophers)
+	{
 		if (pthread_create(&dead_thread, NULL,
 				&check_philosopher_status, &philosophers[i]))
 			return (ERROR_FAILED_TO_CREATE_THREAD);

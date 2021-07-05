@@ -6,38 +6,11 @@
 /*   By: tevan-de <tevan-de@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/05/24 12:17:29 by tevan-de      #+#    #+#                 */
-/*   Updated: 2021/06/24 13:19:09 by tevan-de      ########   odam.nl         */
+/*   Updated: 2021/07/05 12:05:22 by tevan-de      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philo_bonus.h"
-
-static t_bool	check_if_this_philosopher_is_dead(t_philosopher *phil)
-{
-	long long	time;
-	long long	time_between_meals;
-
-	time = (long long)get_time();
-	time_between_meals = time - (long long)phil->time_of_last_meal;
-	if ((long long)phil->max_time_between_meals < time_between_meals)
-		return (TRUE);
-	return (FALSE);
-}
-
-t_bool	check_if_a_philosopher_is_dead(t_philosopher *phil)
-{
-	if (*phil->dead == TRUE)
-		return (TRUE);
-	if (check_if_this_philosopher_is_dead(phil))
-	{
-		print_message("is dead 💀", phil);
-		*phil->dead = TRUE;
-		if (kill(phil->philosopher, SIGKILL))
-			exit(ERROR_FAILED_TO_KILL_PROCESS);
-		return (TRUE);
-	}
-	return (FALSE);
-}
 
 int	ft_isdigit(int c)
 {

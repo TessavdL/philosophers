@@ -6,7 +6,7 @@
 /*   By: tevan-de <tevan-de@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/05/24 11:12:38 by tevan-de      #+#    #+#                 */
-/*   Updated: 2021/06/24 13:36:47 by tevan-de      ########   odam.nl         */
+/*   Updated: 2021/07/05 13:17:44 by tevan-de      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,12 +77,11 @@ typedef struct s_philosopher
 	t_bool			*dead;
 	pid_t			philosopher;
 	sem_t			*forks;
+	sem_t			*dead_semaphore;
 	sem_t			*print_semaphore;
 }	t_philosopher;
 
 // ---------------------------------PROTOTYPES---------------------------------
-
-// void	*checking_for_death
 
 // check_arguments.c
 int					check_arguments(int argc, char **argv);
@@ -90,15 +89,22 @@ int					check_arguments(int argc, char **argv);
 // check_input.c
 int					check_input(t_input input, int argc);
 
+// check_philosopher_status.c
+t_bool				check_if_philosopher_is_full(t_philosopher *phil);
+void				*check_philosopher_status(void *philosopher);
+
 // eat_sleep_think.c
 void				eat_sleep_think_repeat(t_philosopher *philosopher);
 
-// forks.c
-void 				initialize_forks(int number_of_philosophers,
-						t_philosopher *philosophers, sem_t **forks,
+// semaphores.c
+void				assign_forks(int number_of_philosphers,
+						t_philosopher *philosophers, sem_t **forks);
+void				assign_helpers(int number_of_philosphers,
+						t_philosopher *philosophers, sem_t **dead_semaphore,
 						sem_t **print_semaphore);
-
-// end_simulation.c
+int					unlink_and_open_semaphores(int number_of_philosophers,
+						sem_t **forks, sem_t **print_semaphore,
+						sem_t **dead_semaphore);
 
 // start_simulation.c
 void				setup_simulation(t_input input);
@@ -107,7 +113,6 @@ void				setup_simulation(t_input input);
 int					ft_atoi(const char *str);
 
 // utils.c
-t_bool				check_if_a_philosopher_is_dead(t_philosopher *phil);
 int					ft_isdigit(int c);
 unsigned long		get_time(void);
 void				print_message(char *message, t_philosopher *philosopher);
