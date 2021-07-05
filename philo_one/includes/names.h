@@ -6,14 +6,14 @@
 /*   By: tevan-de <tevan-de@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/06/21 16:18:27 by tevan-de      #+#    #+#                 */
-/*   Updated: 2021/06/21 17:22:57 by tevan-de      ########   odam.nl         */
+/*   Updated: 2021/07/05 13:31:46 by tevan-de      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef NAMES_H
 # define NAMES_H
 
-const char *names[] =
+const char	*g_names[] =
 {
 	"Jelle",
 	"Jules",

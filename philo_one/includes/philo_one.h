@@ -6,7 +6,7 @@
 /*   By: tevan-de <tevan-de@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/05/24 11:12:38 by tevan-de      #+#    #+#                 */
-/*   Updated: 2021/06/28 09:51:48 by tevan-de      ########   odam.nl         */
+/*   Updated: 2021/07/05 13:33:02 by tevan-de      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,16 +27,16 @@
 typedef enum e_error
 {
 	NO_ERROR = 0,
-	ERROR_INCORRECT_NUMBER_OF_ARGUMENTS = -1,
-	ERROR_ARGUMENT_IS_NOT_NUMERIC = -2,
-	ERROR_INVALID_INPUT = -3,
-	ERROR_FAILED_TO_CREATE_THREAD = -4,
-	ERROR_FAILED_TO_INITIALIZE_FORKS = -5,
-	ERROR_FAILED_TO_JOIN_THREADS = -6,
-	ERROR_FAILED_TO_DESTROY_FORKS = -7,
-	ERROR_FAILED_TO_INITIALIZE_MUTEX_HELPERS = -8,
-	ERROR_FAILED_TO_DETACH_THREAD = -9,
-	ERROR_MALLOC_FAILED = -10,
+	ERROR_INCORRECT_NUMBER_OF_ARGUMENTS = 1,
+	ERROR_ARGUMENT_IS_NOT_NUMERIC = 2,
+	ERROR_INVALID_INPUT = 3,
+	ERROR_FAILED_TO_CREATE_THREAD = 4,
+	ERROR_FAILED_TO_INITIALIZE_FORKS = 5,
+	ERROR_FAILED_TO_JOIN_THREADS = 6,
+	ERROR_FAILED_TO_DESTROY_FORKS = 7,
+	ERROR_FAILED_TO_INITIALIZE_MUTEX_HELPERS = 8,
+	ERROR_FAILED_TO_DETACH_THREAD = 9,
+	ERROR_MALLOC_FAILED = 10,
 }	t_error;
 
 typedef enum e_bool
@@ -116,7 +116,7 @@ int					setup_simulation(t_input input);
 
 // start_simulation.c
 int					start_simulation(t_philosopher *philosophers,
-					int number_of_philosophers);
+						int number_of_philosophers);
 
 // utils_atoi.c
 int					ft_atoi(const char *str);
@@ -125,6 +125,5 @@ int					ft_atoi(const char *str);
 int					ft_isdigit(int c);
 unsigned long		get_time(void);
 void				print_message(char *message, t_philosopher *philosopher);
-
 
 #endif
