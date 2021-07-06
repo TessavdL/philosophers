@@ -6,7 +6,7 @@
 /*   By: tevan-de <tevan-de@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/05/24 11:12:38 by tevan-de      #+#    #+#                 */
-/*   Updated: 2021/07/05 13:33:02 by tevan-de      ########   odam.nl         */
+/*   Updated: 2021/07/06 14:01:00 by tevan-de      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,6 +83,7 @@ int					check_arguments(int argc, char **argv);
 int					check_input(t_input input, int argc);
 
 // check_philosopher_status.c
+t_bool				check_if_philosopher_is_full(t_philosopher *phil);
 void				*check_philosopher_status(void *philosopher);
 
 // eat_sleep_think.c
