@@ -6,7 +6,7 @@
 /*   By: tevan-de <tevan-de@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/06/25 13:58:47 by tevan-de      #+#    #+#                 */
-/*   Updated: 2021/07/05 13:32:09 by tevan-de      ########   odam.nl         */
+/*   Updated: 2021/07/22 11:41:02 by tevan-de      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,8 @@
 #include "../includes/names.h"
 
 static void	initialize_philosopher(t_input input, t_philosopher *philosopher,
-	t_bool *dead)
+	t_bool *dead, int i)
 {
-	static int	i = 0;
-
 	memset(philosopher, 0, sizeof(*philosopher));
 	philosopher->dead = dead;
 	philosopher->id = i;
@@ -27,7 +25,6 @@ static void	initialize_philosopher(t_input input, t_philosopher *philosopher,
 	philosopher->time_it_takes_to_eat = input.time_it_takes_to_eat;
 	philosopher->time_it_takes_to_sleep = input.time_it_takes_to_sleep;
 	philosopher->time_start = get_time();
-	i++;
 }
 
 t_philosopher	*setup_philosophers(t_input input)
@@ -49,7 +46,7 @@ t_philosopher	*setup_philosophers(t_input input)
 	i = 0;
 	while (i < input.number_of_philosophers)
 	{
-		initialize_philosopher(input, &philosophers[i], dead);
+		initialize_philosopher(input, &philosophers[i], dead, i);
 		i++;
 	}
 	return (philosophers);
