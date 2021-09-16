@@ -6,7 +6,7 @@
 /*   By: tevan-de <tevan-de@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/05/31 13:33:10 by tevan-de      #+#    #+#                 */
-/*   Updated: 2021/07/06 14:04:34 by tevan-de      ########   odam.nl         */
+/*   Updated: 2021/09/16 18:06:47 by tessa         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,7 @@ static void	eat_sleep_think(t_philosopher *phil)
 		return ;
 	if (*phil->dead == TRUE || (phil->total_number_of_meals != UNINITIALIZED
 		&& check_if_philosopher_is_full(phil) == TRUE))
+		return ;
 	print_message("is sleeping 💤", phil);
 	usleep(phil->time_it_takes_to_sleep * 1000);
 }
